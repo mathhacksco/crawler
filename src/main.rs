@@ -59,26 +59,12 @@ mod integrations;
 mod routes;
 mod server;
 
-// use redis::Commands;
-// use integrations::medium::api::fetch_posts;
 use server::init_server;
 
 fn main() {
     let redis_conn = init_redis().expect("Failed to connect to redis");
     init_server(redis_conn);
-
-    // TODO
-    // update_cached_posts().unwrap();
 }
-
-// fn update_cached_posts() -> Result<(), Error> {
-//     let publication = dotenv!("MEDIUM_PUBLICATION");
-//     let res = fetch_posts(publication)?;
-//     let posts = res.payload.references.post;
-
-//     // redis.set("MEDIUM_POSTS", serde_json::to_string(&posts)?)?;
-//     Ok(())
-// }
 
 // TODO create async interface with http://mitsuhiko.github.io/redis-rs/redis/#async
 fn init_redis() -> Result<redis::Connection, Error> {

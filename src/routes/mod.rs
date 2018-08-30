@@ -5,6 +5,9 @@ use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 
 use Error;
+use integrations::medium::api::fetch_posts;
+
+static MEDIUM_PUBLICATION: &str = dotenv!("MEDIUM_PUBLICATION");
 
 pub fn init_routes() -> Vec<Route> {
     let mut v = Vec::new();
@@ -13,7 +16,7 @@ pub fn init_routes() -> Vec<Route> {
 }
 
 pub fn init_medium_posts_routes() -> Vec<Route> {
-    routes![get_posts]
+    routes![get_posts, update_posts]
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -28,7 +31,7 @@ pub struct PostsPayload {
 }
 
 /**
- * List medium hosts
+ * Retrieve a list of  medium posts from cache
  */
 #[get("/posts")]
 fn get_posts(
@@ -36,13 +39,31 @@ fn get_posts(
 ) -> Result<Json<PostsPayload>, Error> {
     match redis_conn_mutex.lock() {
         Ok(redis_conn) => {
-            let posts_str: String = redis_conn.get("MEDIUM_POSTS")?;
+            let posts_str: String = redis_conn.get("@mathhacks:medium_posts")?;
             let posts = serde_json::from_str::<HashMap<String, Post>>(&*posts_str)?;
             Ok(Json(PostsPayload {
                 posts: posts.values().cloned().collect(),
             }))
         }
-        Err(_) => Err(Error::StringError("TODO: Service Unavailable".into())),
+        Err(_) => Err(Error::StringError("TODO: respond w/ 'service unavailable'".into())),
+    }
+}
+
+/**
+ * Refresh the cache of medium posts (TODO return No Content)
+ */
+#[post("/posts")]
+fn update_posts(
+    redis_conn_mutex: State<Arc<Mutex<redis::Connection>>>,
+) -> Result<(), Error> {
+    match redis_conn_mutex.lock() {
+        Ok(redis_conn) => {
+            let res = fetch_posts(MEDIUM_PUBLICATION)?;
+            let posts = res.payload.references.post;
+            redis_conn.set("@mathhacks:medium_posts", serde_json::to_string(&posts)?)?;
+            Ok(())
+        }
+        Err(_) => Err(Error::StringError("TODO: respond w/ 'service unavailable'".into())),
     }
 }
 
