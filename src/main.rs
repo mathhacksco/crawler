@@ -6,27 +6,31 @@
 // #[macro_use]
 // extern crate rocket_contrib;
 // extern crate rocket_cors;
+// #[macro_use]
+// extern crate hyper;
 extern crate dotenv;
+#[macro_use]
+extern crate dotenv_codegen;
 #[macro_use]
 extern crate serde_derive;
 extern crate argon2rs;
 extern crate chrono;
 extern crate rand;
+extern crate redis;
+extern crate reqwest;
 extern crate serde;
 extern crate serde_json;
-// #[macro_use]
-// extern crate hyper;
-extern crate reqwest;
 extern crate url;
 extern crate uuid;
 extern crate validator;
 
+use redis::RedisError;
 use reqwest::Error as ReqwestError;
 use serde_json::Error as SerdeJSONError;
-use std::env;
 
 #[derive(Debug)]
 pub enum Error {
+    RedisError(RedisError),
     SerdeJSONError(SerdeJSONError),
     ReqwestError(ReqwestError),
     StringError(String),
@@ -44,15 +48,33 @@ impl From<ReqwestError> for Error {
     }
 }
 
-mod integrations;
+impl From<RedisError> for Error {
+    fn from(error: RedisError) -> Error {
+        Error::RedisError(error)
+    }
+}
 
-use dotenv::dotenv;
+use redis::Commands;
+mod integrations;
 use integrations::medium::api::fetch_posts;
 
 fn main() {
-    dotenv().ok();
-    let publication =
-        env::var("MEDIUM_PUBLICATION").expect("Missing required parameter \"MEDIUM_PUBLICATION\"");
-    let posts = fetch_posts(publication);
-    println!("{:?}", posts);
+    update_cached_posts().unwrap();
+}
+
+fn update_cached_posts() -> Result<(), Error> {
+    let publication = dotenv!("MEDIUM_PUBLICATION");
+    let res = fetch_posts(publication)?;
+    let posts = res.payload.references.post;
+    let redis = init_redis()?;
+    redis.set("MEDIUM_POSTS", serde_json::to_string(&posts)?)?;
+    Ok(())
+}
+
+// TODO create async interface with http://mitsuhiko.github.io/redis-rs/redis/#async
+fn init_redis() -> Result<redis::Connection, Error> {
+    let uri = dotenv!("REDIS_URI");
+    let client = redis::Client::open(uri)?;
+    let conn = client.get_connection()?;
+    Ok(conn)
 }
