@@ -28,8 +28,8 @@ use reqwest::Error as ReqwestError;
 use rocket::http::{ContentType, Status};
 use rocket::response::{Responder, Response};
 use rocket::Request;
+use serde::{Serialize, Serializer};
 use serde_json::Error as SerdeJSONError;
-use serde::{Serializer, Serialize};
 use std::io::Cursor;
 
 #[derive(Debug)]
@@ -68,7 +68,6 @@ pub enum ErrorResponse {
 }
 
 impl ErrorResponse {
-
     pub fn as_status(&self) -> Status {
         match *self {
             ErrorResponse::NotFound(_) => Status::NotFound,
@@ -128,6 +127,7 @@ pub struct ErrorResponseData {
 
 impl<'a> Responder<'a> for Error {
     fn respond_to(self, _: &Request) -> Result<Response<'a>, Status> {
+        eprintln!("{:?}", self);
         match self {
             Error::RouteError(error) => {
                 let json = serde_json::to_string(&error).unwrap();
@@ -143,20 +143,21 @@ impl<'a> Responder<'a> for Error {
 }
 
 impl Serialize for ErrorResponse {
-  fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: Serializer {
-    match *self {
-      ErrorResponse::NotFound(ref data) => data.serialize(serializer),
-      ErrorResponse::InternalServerError(ref data) => data.serialize(serializer),
-      ErrorResponse::Unauthorized(ref data) => data.serialize(serializer),
-      ErrorResponse::ServiceUnavailable(ref data) => data.serialize(serializer)
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match *self {
+            ErrorResponse::NotFound(ref data) => data.serialize(serializer),
+            ErrorResponse::InternalServerError(ref data) => data.serialize(serializer),
+            ErrorResponse::Unauthorized(ref data) => data.serialize(serializer),
+            ErrorResponse::ServiceUnavailable(ref data) => data.serialize(serializer),
+        }
     }
-  }
 }
-
 
 impl<'a> Responder<'a> for ErrorResponse {
     fn respond_to(self, _: &Request) -> Result<Response<'a>, Status> {
-        println!("{:?}", self);
         let json = serde_json::to_string(&self).unwrap();
         Ok(Response::build()
             .status(self.as_status())
@@ -167,6 +168,7 @@ impl<'a> Responder<'a> for ErrorResponse {
 }
 
 mod integrations;
+mod models;
 mod routes;
 mod server;
 
