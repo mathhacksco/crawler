@@ -1,0 +1,46 @@
+---
+- name: remove source folder
+  file:
+    path: "{{ remote_home_directory }}/crawler"
+    state: absent
+
+- name: clone git repo
+  git:
+    repo: "{{ git_repo_origin }}"
+    dest: "{{ remote_home_directory }}/frontend"
+    refspec: "refs/heads/{{ git_repo_branch }}"
+    version: "{{ git_repo_sha }}"
+
+- name: reset git repo
+  command: git reset --hard HEAD
+  args:
+    chdir: "{{ remote_home_directory }}/crawler"
+
+- name: docker cleanup
+  command: docker rmi -f $(docker images | grep '^<none>' | awk '{print $3}')
+
+  # docker system prune
+
+- name: stop crawler container
+  command: docker stop crawler
+  ignore_errors: yes
+
+- name: remove crawler container
+  command: docker rm crawler
+  ignore_errors: yes
+
+- name: build crawler container
+  command: >
+    docker build
+
+- name: create network
+  command: docker network create crawler_network
+
+- name: run crawler container
+  command: >
+    docker run \
+      -d \
+      --name=crawler \
+      -p 8000:8000 \
+      --network crawler_network \
+      crawler

@@ -20,3 +20,6 @@
 
 - name: check that docker engine was installed
   apt: name=docker-engine state=present
+
+- name: create network
+  command: docker network create crawler_network

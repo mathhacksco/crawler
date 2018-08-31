@@ -9,4 +9,5 @@
   roles:
     - { role: './roles/install-docker' }
     - { role: './roles/nginx' }
-    # - { role: './roles/server' }
+    - { role: './roles/redis' }
+    - { role: './roles/server' }

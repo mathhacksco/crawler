@@ -1,0 +1,19 @@
+---
+- name: pull redis image
+  command: docker pull redis
+
+- name: stop redis container
+  command: docker stop redis
+  ignore_errors: yes
+
+- name: remove redis container
+  command: docker rm redis
+  ignore_errors: yes
+
+- name: run redis container
+  command: >
+    docker run \
+      -d \
+      --name=redis \
+      --network crawler_network \
+      redis
