@@ -6,29 +6,29 @@ use std::io::Read;
 
 use Error;
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct MediumPublicationResponse {
     pub payload: MediumPublicationResponsePayload,
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct MediumPublicationResponsePayload {
     pub references: MediumPublicationResponsePayloadReferences,
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct MediumPublicationResponsePayloadReferences {
     #[serde(rename = "Post")]
     pub post: HashMap<String, MediumPostResponse>,
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct MediumPostResponse {
     pub id: String,
     pub title: String,
 }
 
-pub fn fetch_posts(publication: String) -> Result<MediumPublicationResponse, Error> {
+pub fn fetch_posts(publication: &str) -> Result<MediumPublicationResponse, Error> {
     let client = reqwest::Client::new();
     let url = format!("https://medium.com/{}", publication);
     let mut res = client.get(&url).header(Accept::json()).send()?;
