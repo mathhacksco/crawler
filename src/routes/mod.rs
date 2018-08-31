@@ -30,7 +30,7 @@ pub struct PostsPayload {
 /**
  * Retrieve a list of medium posts from cache
  */
-#[get("/posts")]
+#[get("/mediumPosts")]
 fn get_posts<'a>(
     uri: &'a URI<'a>,
     redis_conn_mutex: State<Arc<Mutex<redis::Connection>>>,
@@ -52,7 +52,7 @@ fn get_posts<'a>(
 /**
  * Refresh the cache of medium posts
  */
-#[post("/posts")]
+#[post("/mediumPosts")]
 fn update_posts<'a>(
     uri: &'a URI<'a>,
     redis_conn_mutex: State<Arc<Mutex<redis::Connection>>>,
