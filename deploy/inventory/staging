@@ -1,0 +1,5 @@
+[staging:children]
+crawler.mathhacks.co
+
+[crawler.mathhacks.co]
+192.241.222.105 ansible_ssh_user=root ansible_ssh_private_key_file=~/.ssh/deploy_key
