@@ -79,25 +79,25 @@ fn update_posts<'a>(
 }
 
 #[catch(401)]
-fn unauthorized(req: &Request) -> Json<ErrorResponse> {
-    Json(ErrorResponse::unauthorized(req.uri().as_str().into()))
+fn unauthorized(req: &Request) -> ErrorResponse {
+    ErrorResponse::unauthorized(req.uri().as_str().into())
 }
 
 #[catch(400)]
-fn bad_request(req: &Request) -> Json<ErrorResponse> {
-    Json(ErrorResponse::bad_request(req.uri().as_str().into()))
+fn bad_request(req: &Request) -> ErrorResponse {
+    ErrorResponse::bad_request(req.uri().as_str().into())
 }
 
 #[catch(404)]
-fn not_found(req: &Request) -> Json<ErrorResponse> {
-    Json(ErrorResponse::not_found(req.uri().as_str().into()))
+fn not_found(req: &Request) -> ErrorResponse {
+    ErrorResponse::not_found(req.uri().as_str().into())
 }
 
 #[catch(500)]
-fn internal_server_error(req: &Request) -> Json<ErrorResponse> {
-    Json(ErrorResponse::internal_server_error(
+fn internal_server_error(req: &Request) -> ErrorResponse {
+    ErrorResponse::internal_server_error(
         req.uri().as_str().into(),
-    ))
+    )
 }
 
 #[catch(503)]

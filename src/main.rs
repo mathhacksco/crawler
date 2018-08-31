@@ -29,6 +29,7 @@ use rocket::http::{ContentType, Status};
 use rocket::response::{Responder, Response};
 use rocket::Request;
 use serde_json::Error as SerdeJSONError;
+use serde::{Serializer, Serialize};
 use std::io::Cursor;
 
 #[derive(Debug)]
@@ -58,7 +59,7 @@ impl From<RedisError> for Error {
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Debug)]
 pub enum ErrorResponse {
     NotFound(ErrorResponseData),
     InternalServerError(ErrorResponseData),
@@ -138,6 +139,30 @@ impl<'a> Responder<'a> for Error {
             }
             _ => Err(Status::InternalServerError),
         }
+    }
+}
+
+impl Serialize for ErrorResponse {
+  fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: Serializer {
+    match *self {
+      ErrorResponse::NotFound(ref data) => data.serialize(serializer),
+      ErrorResponse::InternalServerError(ref data) => data.serialize(serializer),
+      ErrorResponse::Unauthorized(ref data) => data.serialize(serializer),
+      ErrorResponse::ServiceUnavailable(ref data) => data.serialize(serializer)
+    }
+  }
+}
+
+
+impl<'a> Responder<'a> for ErrorResponse {
+    fn respond_to(self, _: &Request) -> Result<Response<'a>, Status> {
+        println!("{:?}", self);
+        let json = serde_json::to_string(&self).unwrap();
+        Ok(Response::build()
+            .status(self.as_status())
+            .header(ContentType::JSON)
+            .sized_body(Cursor::new(json))
+            .finalize())
     }
 }
 
