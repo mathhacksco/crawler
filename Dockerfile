@@ -9,4 +9,4 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 RUN $HOME/.cargo/bin/rustup default nightly 
 # TODO 1.29.0-nightly
 RUN $HOME/.cargo/bin/cargo build
-CMD ["${HOME}/.cargo/bin/cargo", "run"]
+CMD ["sh", "-c", "${HOME}/.cargo/bin/cargo run"]
