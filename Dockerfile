@@ -4,7 +4,7 @@ WORKDIR /usr/src/myapp
 COPY . .
 
 RUN apt-get update && \
-    apt-get install -y -q curl pkg-config build-essential openssl libssl-dev
+    apt-get install -y -q curl pkg-config build-essential openssl libssl-dev cron
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 RUN $HOME/.cargo/bin/rustup default nightly 
 # TODO 1.29.0-nightly
