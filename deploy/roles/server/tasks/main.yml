@@ -29,7 +29,7 @@
   ignore_errors: yes
 
 - name: build crawler container
-  command: docker build .
+  command: docker build . --tag crawler_network
   args:
     chdir: "{{ remote_home_directory }}/crawler"
 
@@ -41,3 +41,5 @@
       -p 8000:8000 \
       --network crawler_network \
       crawler
+  args:
+    chdir: "{{ remote_home_directory }}/crawler"
