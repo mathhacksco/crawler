@@ -7,7 +7,7 @@
 - name: clone git repo
   git:
     repo: "{{ git_repo_origin }}"
-    dest: "{{ remote_home_directory }}/frontend"
+    dest: "{{ remote_home_directory }}/crawler"
     refspec: "refs/heads/{{ git_repo_branch }}"
     version: "{{ git_repo_sha }}"
 
@@ -30,6 +30,13 @@
 - name: build crawler container
   command: >
     docker build
+
+- name: check if docker network exists
+  command: docker network ls | grep crawler_network
+  register: network_check
+
+- debug:
+    var: network_check
 
 - name: create network
   command: docker network create crawler_network
