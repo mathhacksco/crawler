@@ -19,8 +19,6 @@
 - name: docker cleanup
   command: docker rmi -f $(docker images | grep '^<none>' | awk '{print $3}')
 
-  # docker system prune
-
 - name: stop crawler container
   command: docker stop crawler
   ignore_errors: yes
