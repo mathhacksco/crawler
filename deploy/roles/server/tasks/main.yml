@@ -18,6 +18,7 @@
 
 - name: docker cleanup
   command: docker rmi -f $(docker images | grep '^<none>' | awk '{print $3}')
+  ignore_errors: yes
 
 - name: stop crawler container
   command: docker stop crawler
@@ -28,8 +29,9 @@
   ignore_errors: yes
 
 - name: build crawler container
-  command: >
-    docker build
+  command: docker build .
+  args:
+    chdir: "{{ remote_home_directory }}/crawler"
 
 - name: run crawler container
   command: >
