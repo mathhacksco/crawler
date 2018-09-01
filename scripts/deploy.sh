@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e # Exit with nonzero exit code if anything fails
 
-required_vars=('1' 'ANSIBLE_VAULT_PASSWORD')
+required_vars=('1' 'ANSIBLE_VAULT_PASSWORD' 'encrypted_deae71ea1931_key' 'encrypted_deae71ea1931_iv')
 for var in "${required_vars[@]}"; do
   if [ -z ${!var} ]; then
     echo "Error: missing required variable \"$var\"." >&2
