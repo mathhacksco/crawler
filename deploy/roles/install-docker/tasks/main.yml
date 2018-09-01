@@ -21,5 +21,13 @@
 - name: check that docker engine was installed
   apt: name=docker-engine state=present
 
+- name: check if docker network exists
+  command: docker network ls
+  register: network_check
+
+- set_fact:
+    network_exists: "{{ network_check.stdout | search('crawler_network') }}"
+
 - name: create network
   command: docker network create crawler_network
+  when: not network_exists

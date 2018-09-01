@@ -31,16 +31,6 @@
   command: >
     docker build
 
-- name: check if docker network exists
-  command: docker network ls | grep crawler_network
-  register: network_check
-
-- debug:
-    var: network_check
-
-- name: create network
-  command: docker network create crawler_network
-
 - name: run crawler container
   command: >
     docker run \
