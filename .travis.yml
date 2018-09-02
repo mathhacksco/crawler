@@ -21,7 +21,7 @@ notifications:
 
 deploy:
   - provider: script
-    script: bash ./scripts/deploy.sh staging
+    script: travis_wait bash ./scripts/deploy.sh staging
     on:
       branch: master
   - provider: script
