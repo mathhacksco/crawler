@@ -20,11 +20,15 @@ notifications:
       secure: "S3JP8OvBywfUAXs+dxtJVYUrfjeZuFNcwelU3bf4EoYVmeDbCt2Hghkfa5YvSc7yt5EeTrJUhABixDhcxI3mAYq+6AYTgkBkysd6OJYPQA9CMczGqAMEJSCnC9DAF0OP33/uqJbS7MX02+ooh4CD+44Pc0p+mHKx/KcjCNsimixP1es1ICoALZhokURUdGZplMIHrgYLZq3fZL8trRnQ9ZmYsNcqKjuaA+EWsgoL5ZDzienUteQr9alw2p4NEgDKeLW5QF0sPRV4mQCVtgSS5SuwnDQU2qDMrdB1FxAv7pznnySLcuzNQ6xgvhvdl+QLTjw1Ccxn22NxzZEObK/pIIsqaKbH/RoA5N6MQtsxXqcBkiC6ANFxixhm6Gfi7h/KdqNjb0prk2tMJbO7ah6KzuQutLxFH7QXmEx1ETYnXzo4NS9Vt19cWhoRUxgoFpovGY2IQqu+1AJGezKoGb9hfWKCpgje/1R+pxyopkbctH8rRhkyeZI12WkNtIDpd1FIMMXkizy3+DQqabl/r2r2A8jHk0M2n9bcuXG+G9B6BFwyGfN7dU8ZoJsXqQvgzkrrdegLrGl5lOmWxCfeKa/bJFJoGZs2nRsmOtFNguRyl/AI/t8CMFTRquEHiXO0VdyZAz0AG6f/i2viz46ulDWwBmUviJZJasBF0LSDpAMyt70="
 
 deploy:
+  # - provider: script
+  #   script: travis_wait bash ./scripts/deploy.sh staging
+  #   on:
+  #     branch: master
+  # - provider: script
+  #   script: travis_wait bash ./scripts/deploy.sh production
+  #   on:
+  #     branch: release
   - provider: script
-    script: bash ./scripts/deploy.sh staging
+    script: travis_wait bash ./scripts/deploy.sh staging
     on:
-      branch: master
-  - provider: script
-    script: travis_wait bash ./scripts/deploy.sh production
-    on:
-      branch: release
+      branch: jonbrennecke/
