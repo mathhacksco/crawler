@@ -21,10 +21,10 @@ notifications:
 
 deploy:
   - provider: script
-    script: travis_wait bash ./scripts/deploy.sh staging
+    script: bash ./scripts/deploy.sh staging
     on:
       branch: master
   - provider: script
-    script: travis_wait bash ./scripts/deploy.sh production
+    script: bash ./scripts/deploy.sh production
     on:
       branch: release

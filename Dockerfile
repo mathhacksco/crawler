@@ -5,7 +5,7 @@ COPY . .
 
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain nightly
 
-RUN USER=root cargo new --bin crawler
+RUN USER=root $HOME/.cargo/bin/cargo new --bin crawler
 COPY ./Cargo.lock ./Cargo.lock
 COPY ./Cargo.toml ./Cargo.toml
 
