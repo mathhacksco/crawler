@@ -4,7 +4,6 @@
 #![plugin(rocket_codegen)]
 
 extern crate dotenv;
-extern crate hyper;
 extern crate rocket;
 extern crate rocket_contrib;
 extern crate rocket_cors;
@@ -12,16 +11,10 @@ extern crate rocket_cors;
 extern crate dotenv_codegen;
 #[macro_use]
 extern crate serde_derive;
-extern crate argon2rs;
-extern crate chrono;
-extern crate rand;
 extern crate redis;
 extern crate reqwest;
 extern crate serde;
 extern crate serde_json;
-extern crate url;
-extern crate uuid;
-extern crate validator;
 
 use redis::RedisError;
 use reqwest::Error as ReqwestError;
