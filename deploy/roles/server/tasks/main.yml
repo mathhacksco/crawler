@@ -51,7 +51,8 @@
     jid: "{{ crawler_build_task.ansible_job_id }}"
   register: job_result
   until: job_result.finished
-  retries: 30
+  retries: 50
+  delay: 30
 
 - name: run crawler container
   command: >
