@@ -11,9 +11,9 @@ COPY ./Cargo.toml ./Cargo.toml
 
 # Run cargo build before copying src directory in order to create a cached layer
 # see https://github.com/rust-lang/cargo/issues/2644#issuecomment-335258680
-RUN $HOME/.cargo/bin/cargo build --release
+# RUN $HOME/.cargo/bin/cargo build --release
 RUN rm src/*.rs
 COPY ./src ./src
 COPY .env.production .env
-RUN $HOME/.cargo/bin/cargo build --release
+# RUN $HOME/.cargo/bin/cargo build --release
 CMD ["sh", "-c", "${HOME}/.cargo/bin/cargo run --release"]
