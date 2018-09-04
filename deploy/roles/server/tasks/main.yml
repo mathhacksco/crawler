@@ -42,6 +42,16 @@
   command: docker build . --tag crawler
   args:
     chdir: "{{ remote_home_directory }}/crawler"
+  async: 1000
+  poll: 0
+  register: crawler_build_task
+
+- name: check on crawler container
+  async_status:
+    jid: "{{ crawler_build_task.ansible_job_id }}"
+  register: job_result
+  until: job_result.finished
+  retries: 30
 
 - name: run crawler container
   command: >
@@ -56,6 +66,3 @@
   args:
     chdir: "{{ remote_home_directory }}/crawler"
   register: docker_run_result
-
-- debug:
-    var: docker_run_result
