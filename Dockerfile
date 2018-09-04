@@ -14,5 +14,6 @@ COPY ./Cargo.toml ./Cargo.toml
 RUN $HOME/.cargo/bin/cargo build --release
 RUN rm src/*.rs
 COPY ./src ./src
+COPY .env.production .env
 RUN $HOME/.cargo/bin/cargo build --release
-CMD ["sh", "-c", "${HOME}/.cargo/bin/cargo run"]
+CMD ["sh", "-c", "${HOME}/.cargo/bin/cargo run --release"]

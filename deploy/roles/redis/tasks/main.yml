@@ -16,4 +16,5 @@
       -d \
       --name=redis \
       --network crawler_network \
+      --restart unless-stopped \
       redis

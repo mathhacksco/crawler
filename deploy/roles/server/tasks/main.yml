@@ -20,13 +20,15 @@
   command: bash -lc "docker rmi -f $(docker images | grep '^<none>' | awk '{print $3}')"
   ignore_errors: yes
 
-- name: stop crawler container
-  command: bash -lc "docker ps | grep crawler"
-  register: docker_ps
-  ignore_errors: yes
+# - name: stop crawler container
+#   command: bash -lc "docker ps | grep crawler"
+#   register: docker_ps
+#   ignore_errors: yes
+#   environment:
+#     HOME: "{{ user }}"
 
-- debug:
-    var: docker_ps
+# - debug:
+#     var: docker_ps
 
 - name: stop crawler container
   command: docker stop crawler
@@ -44,10 +46,16 @@
 - name: run crawler container
   command: >
     docker run \
-      -d \
-      --name=crawler \
+      -itd \
+      --name crawler \
       -p 8000:8000 \
       --network crawler_network \
+      # --ip {{ crawler_docker_ip }}
+      --restart unless-stopped \
       crawler
   args:
     chdir: "{{ remote_home_directory }}/crawler"
+  register: docker_run_result
+
+- debug:
+    var: docker_run_result
